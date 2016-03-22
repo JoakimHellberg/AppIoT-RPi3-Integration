@@ -1,4 +1,4 @@
-package com.ericsson.appiot.demo.integration.rpi3.device;
+package com.companyx.sensor.platform;
 
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
@@ -11,13 +11,11 @@ import com.pi4j.io.serial.SerialDataListener;
 import com.pi4j.io.serial.SerialFactory;
 import com.pi4j.io.serial.SerialPortException;
 
-import se.sigma.sensation.gateway.sdk.client.data.SensorMeasurement;
-
-public class Arduino {
+public class ArduinoDevice {
+	
 	private final Logger logger = Logger.getLogger(this.getClass().getName()); 
 
 	private String serialNumber;
-	private int hardwareTypeId = 10001;
 
 	private String device;
 	private int baudRate;
@@ -34,7 +32,7 @@ public class Arduino {
 		return baudRate;
 	}
 
-	public MeasurementListener getListener() {
+	public DeviceListener getListener() {
 		return listener;
 	}
 
@@ -42,11 +40,11 @@ public class Arduino {
 		return serial;
 	}
 
-	private MeasurementListener listener;
+	private DeviceListener listener;
 	
 	
 	private final Serial serial; 
-	public Arduino(String serialNumber, String device, int baudrate) {
+	public ArduinoDevice(String serialNumber, String device, int baudrate) {
 		this.serialNumber = serialNumber;
 		this.device = device;
 		this.baudRate = baudrate;
@@ -56,10 +54,10 @@ public class Arduino {
 	
 	public void Connect() throws SerialPortException {
 		serial.open(getDevice(), getBaudRate());
-		serial.addListener(new ArduinoListener());		
+		serial.addListener(new SerialListener());		
 	}
 	
-	public void setListener(MeasurementListener listener) {
+	public void setListener(DeviceListener listener) {
 		this.listener = listener;
 	}
 	
@@ -71,15 +69,7 @@ public class Arduino {
 		this.serialNumber = serialNumber;
 	}
 
-	public int getHardwareTypeId() {
-		return hardwareTypeId;
-	}
-
-	public void setHardwareTypeId(int hardwareTypeId) {
-		this.hardwareTypeId = hardwareTypeId;
-	}
-
-	private class ArduinoListener implements SerialDataListener {
+	private class SerialListener implements SerialDataListener {
 		public void dataReceived(SerialDataEvent event) {
 	       	try {
 				String msg = new String(event.getData().getBytes(), "UTF-8");
@@ -88,19 +78,17 @@ public class Arduino {
 					String row = st.nextToken();
 					if(row.indexOf(":") != -1) {
 						StringTokenizer st2 = new StringTokenizer(row, ":");
-						String idstr = st2.nextToken();
+						String type = st2.nextToken();
 						String valuestr = st2.nextToken();
 						
-						int id = Integer.parseInt(idstr);
 						double value = Double.parseDouble(valuestr);
 						
-						SensorMeasurement measurement = new SensorMeasurement();
-						measurement.setSensorHardwareTypeId(id);
-						measurement.setSerialNumber(getSerialNumber());
-						measurement.setValue(new double[]{value});
-						measurement.setUnixTimestampUTC(System.currentTimeMillis());
+						ArduinoData data = new ArduinoData();
+						data.setSerialNumber(serialNumber);
+						data.setSensorType(type);
+						data.setValue(value);
 						
-						fireOnSensorMeasurement(measurement);
+						fireOnSensorMeasurement(data);
 					} 
 				}
 	       	} catch (UnsupportedEncodingException e) {
@@ -108,9 +96,9 @@ public class Arduino {
 			}
 		}
 
-		private void fireOnSensorMeasurement(SensorMeasurement measurement) {
+		private void fireOnSensorMeasurement(ArduinoData data) {
 			if(listener != null) {
-				listener.onMeasurement(measurement);
+				listener.onData(data);
 			}
 		}
 	}

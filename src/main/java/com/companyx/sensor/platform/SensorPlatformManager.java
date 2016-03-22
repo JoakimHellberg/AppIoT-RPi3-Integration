@@ -1,0 +1,100 @@
+package com.companyx.sensor.platform;
+
+import java.io.File;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import se.sigma.sensation.gateway.sdk.client.data.NetworkCard;
+import se.sigma.sensation.gateway.sdk.client.platform.ConnectivitySettings;
+import se.sigma.sensation.gateway.sdk.client.platform.linux.LinuxManager;
+
+public class SensorPlatformManager {
+
+	private final Logger logger = Logger.getLogger(this.getClass().getName()); 
+	
+	private PlatformListener platformListener;
+	
+	private List<ArduinoDevice> devices = new Vector<ArduinoDevice>();
+	
+	private LinuxManager linuxManager;
+	
+	public SensorPlatformManager() {
+		this.linuxManager = new LinuxManager();
+		ArduinoDevice device = new ArduinoDevice("123", "/dev/ttyUSB0", 9600);
+		device.setListener(new MyDeviceListener());
+		devices.add(device);
+	}
+	
+	public List<ArduinoDevice> getDevices() {
+		return devices;
+	}
+	
+	public ArduinoDevice getDeviceBySerialNumber(String serialNumber) {
+		for(ArduinoDevice arduino : getDevices()) {
+			if(arduino.getSerialNumber().equals(serialNumber)) {
+				return arduino;
+			}
+		}
+		return null;
+	}
+
+	public List<NetworkCard> getNetworkCards() {
+		return linuxManager.getNetworkCards();
+	}
+	
+	public ConnectivitySettings getConnectivitySettings(String adapterName) {
+		return linuxManager.getConnectivitySettings(adapterName);
+	}
+	
+	public int flashDevice(ArduinoDevice device, File file) {
+
+		String command1 = "/usr/bin/ard-reset-arduino " + device.getDevice();
+		
+		String command2 = "/usr/share/arduino/hardware/tools/avr/../avrdude"
+				+ " -q -V -D -p atmega328p"
+				+ " -C /usr/share/arduino/hardware/tools/avr/../avrdude.conf"
+				+ " -c arduino"
+				+ " -b 57600"
+				+ " -P " + device.getDevice() 
+				+ " -U flash:w:" + file.getAbsoluteFile() + ":i";
+		
+		logger.info("Flashing file + " + file.getAbsoluteFile());
+		
+		int exitCode = 0;
+		try {
+			
+			exitCode = linuxManager.executeBash(command1);
+			if(exitCode != 0 ) {
+				logger.severe("Failed to reset device " + device.getDevice());
+				return exitCode;
+			}
+			
+			exitCode = linuxManager.executeBash(command2);
+			if(exitCode != 0 ) {
+				logger.severe("Failed to flash device " + device.getDevice());
+			}
+	        logger.fine("Device " + device.getSerialNumber() + " successfully flashed");
+		} catch(Exception e) {
+			logger.log(Level.SEVERE, "flash device " + device.getSerialNumber(), e);
+		}   
+		return exitCode;
+	}
+	
+	public int reboot() {	
+		return linuxManager.reboot();
+	}
+	
+	public void addListener(PlatformListener platformListener) {
+		this.platformListener = platformListener;
+	}
+	
+	private class MyDeviceListener implements DeviceListener {
+		public void onData(ArduinoData data) {
+			if(platformListener != null) {
+				platformListener.onData(data);
+			}
+		}		
+	}
+}
