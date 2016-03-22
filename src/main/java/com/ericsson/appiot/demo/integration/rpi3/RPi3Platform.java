@@ -22,6 +22,7 @@ import se.sigma.sensation.gateway.sdk.client.data.NetworkSettingResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.RebootResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.RestartApplicationResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.SensorCollectionRegistrationResponseCode;
+import se.sigma.sensation.gateway.sdk.client.data.SensorMeasurement;
 import se.sigma.sensation.gateway.sdk.client.data.UpdatePackage;
 import se.sigma.sensation.gateway.sdk.client.data.UpdatePackageResponseCode;
 import se.sigma.sensation.gateway.sdk.client.registry.SensorCollectionRegistration;
@@ -63,11 +64,11 @@ public class RPi3Platform implements Platform {
 			public void onData(ArduinoData data) {
 				int sensorHardwareTypeId = AppIoTSensorContract.getSensorHardwareTypeId(data.getSensorType());
 				
-				ArduinoDataMeasurement measurement = new ArduinoDataMeasurement();
+				SensorMeasurement measurement = new SensorMeasurement();
 				measurement.setSerialNumber(data.getSerialNumber());
 				measurement.setUnixTimestampUTC(System.currentTimeMillis());
 				measurement.setValue(new double[] {data.getValue()});
-				measurement.setHardwareTypeId(sensorHardwareTypeId);
+				measurement.setSensorHardwareTypeId(sensorHardwareTypeId);
 				client.sendSensorMeasurement(measurement);
 			}
 		});
