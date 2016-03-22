@@ -26,7 +26,7 @@ public class Gateway {
 	}
 	
 	private void start() {
-		logger.log(Level.INFO, "Hackathon Gateway starting up.");
+		logger.log(Level.INFO, "RPi3 Gateway starting up.");
 		
 		platform = new RPi3Platform();		
 		sensationClient = new SensationClient(platform); 

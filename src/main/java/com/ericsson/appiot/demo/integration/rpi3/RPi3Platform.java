@@ -12,6 +12,7 @@ import com.companyx.sensor.platform.SensorPlatformManager;
 import se.sigma.sensation.gateway.sdk.client.Platform;
 import se.sigma.sensation.gateway.sdk.client.PlatformInitialisationException;
 import se.sigma.sensation.gateway.sdk.client.SensationClient;
+import se.sigma.sensation.gateway.sdk.client.core.SensationClientProperties;
 import se.sigma.sensation.gateway.sdk.client.data.DataCollectorDeleteResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.DataCollectorStatus;
 import se.sigma.sensation.gateway.sdk.client.data.DataCollectorStatusCode;
@@ -357,5 +358,13 @@ public class RPi3Platform implements Platform {
 	public void acknowledgeMeasurementsSent(List<ISensorMeasurement> measurementsSent) {
 
 		
+	}
+
+	/**
+	 * Called from Sensation when settings for a data collector is updated.
+	 * @param properties @see {@link SensationClientProperties}
+	 */
+	public void updateDataCollectorSettings(SensationClientProperties properties) {
+		// TODO: Handle updated gateway settings		
 	}
 }
