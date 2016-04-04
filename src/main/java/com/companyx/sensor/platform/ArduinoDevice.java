@@ -9,17 +9,26 @@ import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.SerialDataEvent;
 import com.pi4j.io.serial.SerialDataListener;
 import com.pi4j.io.serial.SerialFactory;
-import com.pi4j.io.serial.SerialPortException;
 
 public class ArduinoDevice {
-	
-	private final Logger logger = Logger.getLogger(this.getClass().getName()); 
 
-	private String serialNumber;
+	private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-	private String device;
-	private int baudRate;
-	
+	private final String serialNumber;
+	private final String device;
+	private final int baudRate;
+	private final Serial serial;
+
+	private DeviceListener listener;
+
+	public ArduinoDevice(String serialNumber, String device, int baudrate) {
+		this.serialNumber = serialNumber;
+		this.device = device;
+		this.baudRate = baudrate;
+
+		this.serial = SerialFactory.createInstance();
+	}
+
 	public Logger getLogger() {
 		return logger;
 	}
@@ -40,36 +49,21 @@ public class ArduinoDevice {
 		return serial;
 	}
 
-	private DeviceListener listener;
-	
-	
-	private final Serial serial; 
-	public ArduinoDevice(String serialNumber, String device, int baudrate) {
-		this.serialNumber = serialNumber;
-		this.device = device;
-		this.baudRate = baudrate;
-
-		serial = SerialFactory.createInstance();
-	}
-
-	public void connect() throws SerialPortException {
+	public void connect() {
 		serial.open(getDevice(), getBaudRate());
-		serial.addListener(new SerialListener());		
+		serial.addListener(new SerialListener());
 	}
-	
+
 	public void setListener(DeviceListener listener) {
 		this.listener = listener;
 	}
-	
+
 	public String getSerialNumber() {
 		return serialNumber;
 	}
 
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
-	}
-
 	private class SerialListener implements SerialDataListener {
+		@Override
 		public void dataReceived(SerialDataEvent event) {
 			try {
 				String msg = new String(event.getData().getBytes(), "UTF-8");
@@ -105,7 +99,7 @@ public class ArduinoDevice {
 		}
 
 		private void fireOnSensorMeasurement(ArduinoData data) {
-			if(listener != null) {
+			if (listener != null) {
 				listener.onData(data);
 			}
 		}
