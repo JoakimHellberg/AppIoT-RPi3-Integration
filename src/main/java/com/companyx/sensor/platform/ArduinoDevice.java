@@ -71,27 +71,35 @@ public class ArduinoDevice {
 
 	private class SerialListener implements SerialDataListener {
 		public void dataReceived(SerialDataEvent event) {
-	       	try {
+			try {
 				String msg = new String(event.getData().getBytes(), "UTF-8");
 				StringTokenizer st = new StringTokenizer(msg, "\n");
-				while(st.hasMoreTokens()) {
+				while (st.hasMoreTokens()) {
 					String row = st.nextToken();
-					if(row.indexOf(":") != -1) {
+					if (row.indexOf(":") != -1) {
 						StringTokenizer st2 = new StringTokenizer(row, ":");
-						String type = st2.nextToken();
-						String valuestr = st2.nextToken();
-						
-						double value = Double.parseDouble(valuestr);
-						
-						ArduinoData data = new ArduinoData();
-						data.setSerialNumber(serialNumber);
-						data.setSensorType(type);
-						data.setValue(value);
-						
-						fireOnSensorMeasurement(data);
-					} 
+						if (st2.countTokens() == 2) {
+							String type = st2.nextToken();
+							String valuestr = st2.nextToken();
+
+							try {
+								double value = Double.parseDouble(valuestr);
+
+								ArduinoData data = new ArduinoData();
+								data.setSerialNumber(serialNumber);
+								data.setSensorType(type);
+								data.setValue(value);
+
+								fireOnSensorMeasurement(data);
+							} catch (NumberFormatException e) {
+								logger.log(Level.INFO, "Unable to parse value: " + valuestr);
+							}
+						} else {
+							logger.log(Level.INFO, "Discarding recieved row, too few tokens: " + row);
+						}
+					}
 				}
-	       	} catch (UnsupportedEncodingException e) {
+			} catch (UnsupportedEncodingException e) {
 				logger.log(Level.SEVERE, "UTF-8 not supported.", e);
 			}
 		}
