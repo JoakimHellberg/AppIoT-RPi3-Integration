@@ -79,10 +79,7 @@ public class ArduinoDevice {
 							try {
 								double value = Double.parseDouble(valuestr);
 
-								ArduinoData data = new ArduinoData();
-								data.setSerialNumber(serialNumber);
-								data.setSensorType(type);
-								data.setValue(value);
+								ArduinoData data = new ArduinoData(serialNumber, type, value);
 
 								fireOnSensorMeasurement(data);
 							} catch (NumberFormatException e) {

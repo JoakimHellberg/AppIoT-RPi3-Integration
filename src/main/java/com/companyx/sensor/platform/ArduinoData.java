@@ -1,35 +1,27 @@
 package com.companyx.sensor.platform;
 
-public class ArduinoData {
+public final class ArduinoData {
 
-	private String serialNumber;
-	
-	private String sensorType;
-	
-	private double value;
+	private final String serialNumber;
+	private final String sensorType;
+	private final double value;
+
+	public ArduinoData(String serialNumber, String sensorType, double value) {
+		this.serialNumber = serialNumber;
+		this.sensorType = sensorType;
+		this.value = value;
+	}
 
 	public String getSerialNumber() {
 		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
 	}
 
 	public String getSensorType() {
 		return sensorType;
 	}
 
-	public void setSensorType(String sensorType) {
-		this.sensorType = sensorType;
-	}
-
 	public double getValue() {
 		return value;
 	}
 
-	public void setValue(double value) {
-		this.value = value;
-	}
-	
 }
