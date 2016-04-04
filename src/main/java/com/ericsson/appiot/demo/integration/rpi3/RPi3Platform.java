@@ -89,7 +89,7 @@ public class RPi3Platform implements Platform {
 		List<ArduinoDevice> devices = manager.getDevices(); 
 		for(ArduinoDevice device : devices){
 			if(client.isSerialNumberRegistered(device.getSerialNumber())) {
-				device.Connect();
+				device.connect();
 			}
 		}
 	}
@@ -149,7 +149,7 @@ public class RPi3Platform implements Platform {
 		}
 		
 		if(registeredDevice != null) {			
-			registeredDevice.Connect();			
+			registeredDevice.connect();
 			logger.log(Level.INFO, "Successfully registered sensor collection " + registration.getSerialNumber());
 			return SensorCollectionRegistrationResponseCode.ADD_OK;
 		}
@@ -317,7 +317,7 @@ public class RPi3Platform implements Platform {
 					responseCode = UpdatePackageResponseCode.FAILED_TO_APPLY;
 				} else {
 					logger.severe("Device successfully flashed!");
-					device.Connect();
+					device.connect();
 				}
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Failed flash device", e);
