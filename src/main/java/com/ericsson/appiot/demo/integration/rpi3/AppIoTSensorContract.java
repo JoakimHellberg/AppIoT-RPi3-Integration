@@ -23,7 +23,7 @@ public class AppIoTSensorContract {
 		return instance;
 	}
 	
-	public static int getSensorHardwareTypeId(String platformIdentifier) {
+	public static Integer getSensorHardwareTypeId(String platformIdentifier) {
 		return getInstance().sensorHardswareTypeIds.get(platformIdentifier);
 	}
 	

@@ -63,14 +63,25 @@ public class RPi3Platform implements Platform {
 		manager.addListener(new PlatformListener() {
 			
 			public void onData(ArduinoData data) {
-				int sensorHardwareTypeId = AppIoTSensorContract.getSensorHardwareTypeId(data.getSensorType());
-				
-				SensorMeasurement measurement = new SensorMeasurement();
-				measurement.setSerialNumber(data.getSerialNumber());
-				measurement.setUnixTimestampUTC(System.currentTimeMillis());
-				measurement.setValue(new double[] {data.getValue()});
-				measurement.setSensorHardwareTypeId(sensorHardwareTypeId);
-				client.sendSensorMeasurement(measurement);
+				String sensorType = data.getSensorType();
+
+				if (sensorType != null) {
+					Integer sensorHardwareTypeId = AppIoTSensorContract.getSensorHardwareTypeId(sensorType);
+
+					if (sensorHardwareTypeId != null) {
+						SensorMeasurement measurement = new SensorMeasurement();
+						measurement.setSerialNumber(data.getSerialNumber());
+						measurement.setUnixTimestampUTC(System.currentTimeMillis());
+						measurement.setValue(new double[] { data.getValue() });
+						measurement.setSensorHardwareTypeId(sensorHardwareTypeId);
+
+						client.sendSensorMeasurement(measurement);
+					} else {
+						logger.log(Level.WARNING, "Bad sensor hardware type id: " + sensorHardwareTypeId);
+					}
+				} else {
+					logger.log(Level.WARNING, "sensor type is null: " + data);
+				}
 			}
 		});
 		
