@@ -29,7 +29,7 @@ public class PlatformXManager {
 		ArduinoDevice device = new ArduinoDevice("/dev/ttyUSB0", 9600);
 		device.setListener(new MyDeviceListener());
 		devices.add(device);
-		device.Connect();
+		device.connect();
 	}
 	
 	public List<ArduinoDevice> getDevices() {

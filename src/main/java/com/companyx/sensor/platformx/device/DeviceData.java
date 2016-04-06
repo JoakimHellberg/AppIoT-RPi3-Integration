@@ -1,34 +1,30 @@
 package com.companyx.sensor.platformx.device;
 
-public class DeviceData {
+public final class DeviceData {
 
-	private String serialNumber;
-	
-	private String sensorType;
-	
-	private double value;
+	private final String serialNumber;
+	private final String sensorType;
+	private final Double value;
+
+	public DeviceData(String serialNumber, String sensorType) {
+		this(serialNumber, sensorType, null);
+	}
+
+	public DeviceData(String serialNumber, String sensorType, Double value) {
+		this.serialNumber = serialNumber;
+		this.sensorType = sensorType;
+		this.value = value;
+	}
 
 	public String getSerialNumber() {
 		return serialNumber;
-	}
-
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
 	}
 
 	public String getSensorType() {
 		return sensorType;
 	}
 
-	public void setSensorType(String sensorType) {
-		this.sensorType = sensorType;
-	}
-
-	public double getValue() {
+	public Double getValue() {
 		return value;
 	}
-
-	public void setValue(double value) {
-		this.value = value;
-	}	
 }

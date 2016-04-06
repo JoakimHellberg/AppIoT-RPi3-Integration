@@ -42,7 +42,7 @@ public class ArduinoDevice {
 		serial = SerialFactory.createInstance();
 	}	
 	
-	public void Connect() throws SerialPortException {
+	public void connect() throws SerialPortException {
 		serial.open(getDevice(), getBaudRate());
 		serial.addListener(new SerialListener(this));		
 	}

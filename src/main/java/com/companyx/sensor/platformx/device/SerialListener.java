@@ -24,28 +24,29 @@ public class SerialListener implements SerialDataListener {
 				String row = stRows.nextToken();
 				boolean validMeasurement = false;
 				if(row.indexOf(";") != -1) {
-					DeviceData deviceData = new DeviceData();
+					String sensorType = null;
+					String serialNumber = null;
+					Double value = null;
 					StringTokenizer stDatas = new StringTokenizer(row, ";");
 					while(stDatas.hasMoreTokens()) {
 						String data = stDatas.nextToken();
 						StringTokenizer measurement = new StringTokenizer(data, ":");
 						if(measurement.hasMoreTokens()) {
-							String dataType = measurement.nextToken();
+							sensorType = measurement.nextToken();
 							if(measurement.hasMoreTokens()) {
 								String valuestr = measurement.nextToken();
-								deviceData.setSensorType(dataType);
-								if(dataType.equals("ID")) {
-									deviceData.setSerialNumber(valuestr);
+								if("ID".equals(sensorType)) {
+									serialNumber = valuestr;
 									validMeasurement = true;
 								} else {
-									double dataValue = Double.parseDouble(valuestr);
-									deviceData.setValue(dataValue);
+									value = Double.parseDouble(valuestr);
 									validMeasurement = true;
 								}
 							}
 						}
 					}
 					if(validMeasurement) {
+						DeviceData deviceData = new DeviceData(sensorType, serialNumber, value);
 						this.device.newMeasurement(deviceData);
 					}
 				} 

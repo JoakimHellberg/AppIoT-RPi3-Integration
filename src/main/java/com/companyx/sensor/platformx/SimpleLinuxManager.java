@@ -72,42 +72,57 @@ public class SimpleLinuxManager {
 			int exitCode = p.exitValue();
 			logger.fine("ifconfig process exited with status code: " + exitCode);
 
-			if(exitCode != 0) {
-		        BufferedReader output = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-		        String info = output.readLine();
-				logger.severe("Failed to execute ifconfig: " + info);
-				return result;
+			if (exitCode != 0) {
+				BufferedReader output = null;
+				try {
+					output = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					String info = output.readLine();
+					logger.severe("Failed to execute ifconfig: " + info);
+					return result;
+				} finally {
+					if (output != null) {
+						output.close();
+					}
+				}
 			}
 
-			BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-	        String info = output.readLine();
-	        logger.fine("ifconfig result for " + networkAdapter + ": " + info);
-	        
-	        result = new ConnectivitySettings();
-	        StringTokenizer st = new StringTokenizer(info);
-	        
-	        while(st.hasMoreElements()) {
-	        	String infoPart = st.nextToken();
-	        	if(infoPart.contains(":")) {
-	        		StringTokenizer st2 = new StringTokenizer(infoPart, ":");
-	        		String key = st2.nextToken();
-	        		String value = st2.nextToken();
-	        		 
-	        		if(key.equalsIgnoreCase("addr")) {
-	        			result.setIpAddress(value);
-	        		} else if(key.equalsIgnoreCase("Mask")) {
-	        			result.setSubnet(value);
-	        		} else {
-	        			result.setGateway(value);
-	        		}
-	        	}
-	        }
-	     
-	     } catch (Exception e) {
-	       	 logger.log(Level.WARNING, "Failed to parse network connectivity info for " + networkAdapter + ". " + e.getMessage(), e);
-	     }
-	     return result;
-	 }
+			BufferedReader output = null;
+			try {
+				output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				String info = output.readLine();
+				logger.fine("ifconfig result for " + networkAdapter + ": " + info);
+
+				result = new ConnectivitySettings();
+				StringTokenizer st = new StringTokenizer(info);
+
+				while (st.hasMoreElements()) {
+					String infoPart = st.nextToken();
+					if (infoPart.contains(":")) {
+						StringTokenizer st2 = new StringTokenizer(infoPart, ":");
+						String key = st2.nextToken();
+						String value = st2.nextToken();
+
+						if (key.equalsIgnoreCase("addr")) {
+							result.setIpAddress(value);
+						} else if (key.equalsIgnoreCase("Mask")) {
+							result.setSubnet(value);
+						} else {
+							result.setGateway(value);
+						}
+					}
+				}
+			} finally {
+				if (output != null) {
+					output.close();
+				}
+			}
+
+		} catch (Exception e) {
+			logger.log(Level.WARNING,
+					"Failed to parse network connectivity info for " + networkAdapter + ". " + e.getMessage(), e);
+		}
+		return result;
+	}
 
 	public int executeBash(String command) throws IOException, InterruptedException {
 		String[] cmd = {"/bin/sh", "-c", command};	
@@ -119,19 +134,33 @@ public class SimpleLinuxManager {
 		exitCode = p.exitValue();
 		logger.fine("Linux process exited with status code: " + exitCode);
 
-		if(exitCode != 0) {
-	        BufferedReader output = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-			String info = "";
-			while((info = output.readLine()) != null) {
-				logger.log(Level.SEVERE, info);
+		if (exitCode != 0) {
+			BufferedReader output = null;
+			try {
+				output = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+				String info = "";
+				while ((info = output.readLine()) != null) {
+					logger.log(Level.SEVERE, info);
+				}
+				logger.severe("Failed to execute script: " + info);
+			} finally {
+				if (output != null) {
+					output.close();
+				}
 			}
-			logger.severe("Failed to execute script: " + info);
 		}
 
-		BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-		String info = "";
-		while((info = output.readLine()) != null) {
-			logger.log(Level.INFO, info);
+		BufferedReader output = null;
+		try {
+			output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String info;
+			while ((info = output.readLine()) != null) {
+				logger.log(Level.INFO, info);
+			}
+		} finally {
+			if (output != null) {
+				output.close();
+			}
 		}
         logger.fine("Bash script successfully executed");
         return exitCode;
