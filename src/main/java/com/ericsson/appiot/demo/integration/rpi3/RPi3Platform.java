@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.companyx.sensor.platform.ArduinoData;
-import com.companyx.sensor.platform.ArduinoDevice;
-import com.companyx.sensor.platform.PlatformListener;
-import com.companyx.sensor.platform.SensorPlatformManager;
+import com.companyx.sensor.platformx.PlatformXManager;
+import com.companyx.sensor.platformx.device.ArduinoDevice;
 
 import se.sigma.sensation.gateway.sdk.client.Platform;
 import se.sigma.sensation.gateway.sdk.client.PlatformInitialisationException;
@@ -23,7 +21,6 @@ import se.sigma.sensation.gateway.sdk.client.data.NetworkSettingResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.RebootResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.RestartApplicationResponseCode;
 import se.sigma.sensation.gateway.sdk.client.data.SensorCollectionRegistrationResponseCode;
-import se.sigma.sensation.gateway.sdk.client.data.SensorMeasurement;
 import se.sigma.sensation.gateway.sdk.client.data.UpdatePackage;
 import se.sigma.sensation.gateway.sdk.client.data.UpdatePackageResponseCode;
 import se.sigma.sensation.gateway.sdk.client.registry.SensorCollectionRegistration;
@@ -43,7 +40,7 @@ public class RPi3Platform implements Platform {
 	private static final String HARDWARE_VERSION = "1.0";
 	private static final String SOFTWARE_VERSION = "1.0";
 
-	private SensorPlatformManager manager;
+	private PlatformXManager manager;
 	private SensationClient client;
 	private DeploymentApplicationConnector bluetoothConnector;
 	
@@ -57,30 +54,9 @@ public class RPi3Platform implements Platform {
 	 */
 	public void init(final SensationClient client) throws PlatformInitialisationException {
 		this.client = client;
-		this.manager = new SensorPlatformManager();
+		this.manager = new PlatformXManager();
 		bluetoothConnector = new JSR82Connector();
-		
-		manager.addListener(new PlatformListener() {
-			
-			public void onData(ArduinoData data) {
-				int sensorHardwareTypeId = AppIoTSensorContract.getSensorHardwareTypeId(data.getSensorType());
-				
-				SensorMeasurement measurement = new SensorMeasurement();
-				measurement.setSerialNumber(data.getSerialNumber());
-				measurement.setUnixTimestampUTC(System.currentTimeMillis());
-				measurement.setValue(new double[] {data.getValue()});
-				measurement.setSensorHardwareTypeId(sensorHardwareTypeId);
-				client.sendSensorMeasurement(measurement);
-			}
-		});
-		
-		// Start up device if already registered.
-		List<ArduinoDevice> devices = manager.getDevices(); 
-		for(ArduinoDevice device : devices){
-			if(client.isSerialNumberRegistered(device.getSerialNumber())) {
-				device.Connect();
-			}
-		}
+		manager.addListener(new MeasurementHandler(client));
 	}
 
 	/**
@@ -204,7 +180,7 @@ public class RPi3Platform implements Platform {
 	public DataCollectorStatus updateDataCollectorStatus() {
 		DataCollectorStatus result = new DataCollectorStatus();
 		result.setBluetoothMacAddress(bluetoothConnector.getBluetoothAddress());
-		result.setHardwareTypeId(AppIoTSensorContract.RPi3_HARDWARE_TYPE_ID);
+		result.setHardwareTypeId(AppIoTContract.RPi3_HARDWARE_TYPE_ID);
 		result.setFirmwareVersion(FIRMWARE_VERSION);
 		result.setHardwareVersion(HARDWARE_VERSION);
 		result.setSoftwareVersion(SOFTWARE_VERSION);

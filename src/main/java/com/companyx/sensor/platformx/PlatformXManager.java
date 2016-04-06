@@ -1,4 +1,4 @@
-package com.companyx.sensor.platform;
+package com.companyx.sensor.platformx;
 
 import java.io.File;
 import java.util.List;
@@ -6,25 +6,30 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.companyx.sensor.platformx.device.ArduinoDevice;
+import com.companyx.sensor.platformx.device.DeviceData;
+import com.companyx.sensor.platformx.device.DeviceListener;
+
 import se.sigma.sensation.gateway.sdk.client.data.NetworkCard;
 import se.sigma.sensation.gateway.sdk.client.platform.ConnectivitySettings;
-import se.sigma.sensation.gateway.sdk.client.platform.linux.LinuxManager;
 
-public class SensorPlatformManager {
+public class PlatformXManager {
 
 	private final Logger logger = Logger.getLogger(this.getClass().getName()); 
 	
-	private PlatformListener platformListener;
+	private PlatformXListener platformListener;
 	
 	private List<ArduinoDevice> devices = new Vector<ArduinoDevice>();
 	
-	private LinuxManager linuxManager;
+	private SimpleLinuxManager linuxManager;
 	
-	public SensorPlatformManager() {
-		this.linuxManager = new LinuxManager();
-		ArduinoDevice device = new ArduinoDevice("123", "/dev/ttyUSB0", 9600);
+	
+	public PlatformXManager() {
+		this.linuxManager = new SimpleLinuxManager();
+		ArduinoDevice device = new ArduinoDevice("/dev/ttyUSB0", 9600);
 		device.setListener(new MyDeviceListener());
 		devices.add(device);
+		device.Connect();
 	}
 	
 	public List<ArduinoDevice> getDevices() {
@@ -86,12 +91,13 @@ public class SensorPlatformManager {
 		return linuxManager.reboot();
 	}
 	
-	public void addListener(PlatformListener platformListener) {
+	public void addListener(PlatformXListener platformListener) {
 		this.platformListener = platformListener;
 	}
 	
+	// Simply forward device data to platform listener.
 	private class MyDeviceListener implements DeviceListener {
-		public void onData(ArduinoData data) {
+		public void onData(DeviceData data) {
 			if(platformListener != null) {
 				platformListener.onData(data);
 			}

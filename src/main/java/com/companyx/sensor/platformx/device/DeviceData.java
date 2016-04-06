@@ -1,6 +1,6 @@
-package com.companyx.sensor.platform;
+package com.companyx.sensor.platformx.device;
 
-public class ArduinoData {
+public class DeviceData {
 
 	private String serialNumber;
 	
@@ -30,6 +30,5 @@ public class ArduinoData {
 
 	public void setValue(double value) {
 		this.value = value;
-	}
-	
+	}	
 }
