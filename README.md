@@ -28,7 +28,7 @@ Download Win32DiskImager: http://sourceforge.net/projects/win32diskimager/files/
 - Install AppIoT client by executing the Setup script: ./Setup.sh. This will install dependencies and setup the home directory (/home/pi/SENSATION_HOME). Once completed, the RPi will reboot.
 
 ## Quick route
-In order to get the RPi up and running some preparations are required. All these preparations are provided in the following image: https://appiothackathon.blob.core.windows.net/rpi3/AppIoT-RPi3DemoIntegration.img. 
+In order to get the RPi up and running some preparations are required. All these preparations are provided in the following image: https://appiothackathon.blob.core.windows.net/rpi3/2016-04-06-AppIoT-RPi3DemoGateway.zip. Unpack the zip file to extract the .img file.
 Insert your SD Card and then run Win32DiskImager.exe. Make sure your SD Card drive is selected. Select the  'AppIoT-RPi3DemoIntegration.img' image file from the extracted zip file and then press write.
 
 # Get the MAC Address
