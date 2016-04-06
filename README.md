@@ -22,7 +22,7 @@ Download Win32DiskImager: http://sourceforge.net/projects/win32diskimager/files/
 
 ## Install AppIoT client and dependencies
 - Startup WinSCP and connect to the IP address of the RPi. Default username and password for raspian is pi/raspberry.
-- Transer files inside the install folder https://github.com/JoakimHellberg/AppIoT-RPi3-Integration-Start/tree/master/Install
+- Transer files inside the install folder https://github.com/JoakimHellberg/AppIoT-RPi3-Integration-Start/tree/master/Install to the /home/pi/ folder of the RPi3.
 - Startup Putty and connect to the IP address of the RPi. Default username and password for raspian is pi/raspberry.
 - Make the Setup.sh script executable by using the following command: chmod 755 ./Setup.sh
 - Install AppIoT client by executing the Setup script: ./Setup.sh. This will install dependencies and setup the home directory (/home/pi/SENSATION_HOME). Once completed, the RPi will reboot.
