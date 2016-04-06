@@ -1,4 +1,4 @@
-package com.companyx.sensor.platform;
+package com.companyx.sensor.platformx;
 
 import java.io.BufferedReader;
 import java.io.IOException;
