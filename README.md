@@ -28,16 +28,16 @@ Download Win32DiskImager: http://sourceforge.net/projects/win32diskimager/files/
 - Install AppIoT client by executing the Setup script: ./Setup.sh. This will install dependencies and setup the home directory (/home/pi/SENSATION_HOME). Once completed, the RPi will reboot.
 
 ## Quick route
-In order to get the RPi up and running some preparations are required. All these preparations are provided in the following image: https://appiothackathon.blob.core.windows.net/rpi3/2016-04-06-AppIoT-RPi3DemoGateway.zip. Unpack the zip file to extract the .img file.
+In order to get the RPi up and running some preparations are required. All these preparations are provided in the following image: https://appiothackathon.blob.core.windows.net/rpi3/2016-04-07-AppIoT-RPi3DemoGateway.zip. Unpack the zip file to extract the .img file.
 Insert your SD Card and then run Win32DiskImager.exe. Make sure your SD Card drive is selected. Select the  'AppIoT-RPi3DemoIntegration.img' image file from the extracted zip file and then press write.
 
 # Get the MAC Address
 When the RPi is prepared and rebooted, the RPi will launch the Demo Gateway. In the console the demo gateway will print the MACAddress of the bluetooth chip. Use the MAC Address to generate a QR-Code for the Deployment Application to use when registering the gateway.
 There are several websites to use when generating a QR-Code, here is one http://www.qr-code-generator.com/ 
 
-Enter the following as content of the QR-Code: G;<MAC ADDRESS>;10000
+Enter the following as content of the QR-Code: G;MAC ADDRESS;10000
 - G = Gateway
-- <MAC ADDRESS> = The Mac Address you got from the RPi. But you need to add colon between the hex pairs like 12:AB:21:AD:BA:32
+- MAC ADDRESS = The Mac Address you got from the RPi. But you need to add colon between the hex pairs like 12:AB:21:AD:BA:32
 - 10000 = Hardware Type Id of the gateway type registered in AppIoT.
 Valid content would be G;12:AB:21:AD:BA:32;10000
 
