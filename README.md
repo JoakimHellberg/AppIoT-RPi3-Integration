@@ -42,3 +42,11 @@ Enter the following as content of the QR-Code: G;<MAC ADDRESS>;10000
 Valid content would be G;12:AB:21:AD:BA:32;10000
 
 Once generated, you could print the QR-Code and put it on the outside of the RPi to easily scan when registering using the Deployment Application.
+
+# AppIoT registration
+# Gateway Type
+Create a gateway type in AppIoT Settings -> Hardware Types -> Gateway Types -> Create
+- Name: RPi3
+- Type ID: 10000
+
+A Default template for the gateway is automatically created and we do not need to do any changes to it.
