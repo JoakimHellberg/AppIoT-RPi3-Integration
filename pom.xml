@@ -38,7 +38,12 @@
             <id>oss.sonatype.org-snapshot</id>
             <url>http://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
-  </repositories>
+ 		<repository>
+			<id>appiot-repo</id>
+			<name>AppIoT Nexus Server</name>
+			<url>http://sensation-repo.cloudapp.net:8081/nexus/</url>
+		</repository>
+	</repositories>
  <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -66,11 +71,10 @@
 		<artifactId>httpclient</artifactId>
 		<version>4.3.1</version>
 	</dependency>
-
 	<dependency>
 		<groupId>se.sigma.sensation</groupId>
 		<artifactId>gateway-sdk</artifactId>
-		<version>0.8.8</version>
+		<version>0.8.9</version>
 	</dependency>
   </dependencies>  
-</project>
+ </project>

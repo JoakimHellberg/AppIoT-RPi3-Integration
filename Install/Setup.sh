@@ -51,6 +51,6 @@ sudo /home/pi/SENSATION_HOME/Gateway.sh &
 
 
 # Expand sd card partition
-sudo raspi-config --expand-rootfs
+# sudo raspi-config --expand-rootfs
 
 sudo reboot
