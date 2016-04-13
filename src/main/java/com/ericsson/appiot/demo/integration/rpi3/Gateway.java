@@ -55,7 +55,6 @@ public class Gateway {
 		// This result in a bluetooth socket to be established.
 		buttonPin.addListener(new GpioPinListenerDigital() {
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-            	System.out.println("handleGpioPinDigitalStateChangeEvent: state : " + event.getState());
             	if(event.getState().isHigh()) {
             		deploymentApplicationManager.start();
                 	logger.log(Level.INFO, "Starting deployment interface.");
@@ -108,9 +107,14 @@ public class Gateway {
 		}
 
 		public void onStop() {
+			running = false;
 			stop = true;
 			connected = false;
 			ledPin.low();
+
+			if(!sensationClient.isRegistered()) {
+				deploymentApplicationManager.start();
+			}			
 		}
 
 		public void onWaiting() {
@@ -131,6 +135,12 @@ public class Gateway {
 				}
 			}
 			running = false;
+		}
+
+		@Override
+		public void onClientDisConnected() {
+			// TODO Auto-generated method stub
+			
 		}		
 	}
 }
